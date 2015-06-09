@@ -195,10 +195,10 @@ public class BluetoothChatFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mConversationView = (ListView) view.findViewById(R.id.in);
+        //mConversationView = (ListView) view.findViewById(R.id.in);
         mSongView = (ListView)view.findViewById(R.id.song_list);
-        mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
-        mSendButton = (Button) view.findViewById(R.id.button_send);
+        //mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
+        //mSendButton = (Button) view.findViewById(R.id.button_send);
         mPrevButton = (ImageButton) view.findViewById(R.id.media_previous);
         mPauseButton = (ImageButton) view.findViewById(R.id.media_pause);
         mPlayButton = (ImageButton) view.findViewById(R.id.media_play);
@@ -212,13 +212,14 @@ public class BluetoothChatFragment extends Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
+        //mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
 
-        mConversationView.setAdapter(mConversationArrayAdapter);
+        //mConversationView.setAdapter(mConversationArrayAdapter);
 
         // Initialize the compose field with a listener for the return key
-        mOutEditText.setOnEditorActionListener(mWriteListener);
+        //mOutEditText.setOnEditorActionListener(mWriteListener);
 
+        /*
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -231,6 +232,7 @@ public class BluetoothChatFragment extends Fragment {
                 }
             }
         });
+        */
 
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = new BluetoothChatService(getActivity(), mHandler);
@@ -340,7 +342,7 @@ public class BluetoothChatFragment extends Fragment {
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
+                            //mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -355,13 +357,14 @@ public class BluetoothChatFragment extends Fragment {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    handlePlayerMsg(readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -380,6 +383,40 @@ public class BluetoothChatFragment extends Fragment {
             }
         }
     };
+
+    public void handlePlayerMsg(String readMessage) {
+        FragmentActivity activity = getActivity();
+        //readMessage = readMessage.trim();
+        /*
+        if(readMesage.startsWith("pickSong")) {
+            readMesage = readMesage.substring(8);
+        }
+        */
+        System.out.println(readMessage);
+        if (null != activity) {
+            Toast.makeText(activity, "Message received: " + readMessage,
+                    Toast.LENGTH_SHORT).show();
+        }
+        switch (readMessage) {
+            case "play":
+                mMusicController.start();
+                break;
+            case "prev":
+                mMusicController.playPrev();
+                break;
+            case "next":
+                mMusicController.playNext();
+                break;
+            case "pause":
+                mMusicController.pause();
+                break;
+            default:
+                if (null != activity) {
+                    Toast.makeText(activity, "Message received but it couldn't be handled",
+                            Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

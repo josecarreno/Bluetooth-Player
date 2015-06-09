@@ -14,11 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical" >
-
+<!--
 
     <ListView
         android:id="@+id/in"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/send" />
-    </LinearLayout>
+    </LinearLayout> -->
 
     <ListView
         android:id="@+id/song_list"
@@ -53,18 +53,20 @@
         android:layout_height="wrap_content" >
     </ListView>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:layout_alignParentBottom="true">
 
         <ImageButton
             android:id="@+id/media_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_alignParentLeft="true"
             android:src="@android:drawable/ic_media_previous" />
 
         <ImageButton
@@ -72,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/media_previous"
             android:src="@android:drawable/ic_media_pause" />
 
         <ImageButton
@@ -80,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:clickable="true"
+            android:layout_toRightOf="@id/media_pause"
             android:src="@android:drawable/ic_media_play" />
 
         <ImageButton
@@ -87,8 +91,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@id/media_play"
             android:src="@android:drawable/ic_media_next" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
