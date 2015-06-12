@@ -14,6 +14,7 @@ import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.android.bluetoothchat.BluetoothChatService;
 import com.example.android.bluetoothchat.MainActivity;
 import com.example.android.bluetoothchat.R;
 
@@ -33,6 +34,8 @@ public class MusicService extends Service implements
     private int songPosn;
     private final IBinder musicBind = new MusicBinder();
     private String songTitle = "";
+    private String songArtist = "";
+    private String songDuration = "";
     private static final int NOTIFY_ID = 1;
     private boolean shuffle = false;
     private Random rand;
@@ -60,13 +63,33 @@ public class MusicService extends Service implements
         songs = theSongs;
     }
 
+    private void sendMessage(String message) {
+        BluetoothChatService bcs = BluetoothChatService.getInstance(null, null);
+        // Check that we're actually connected before trying anything
+        /*
+        if (bcs.getState() != BluetoothChatService.STATE_CONNECTED) {
+            return;
+        }
+        */
+
+        // Check that there's actually something to send
+        if (message.length() > 0) {
+            // Get the message bytes and tell the BluetoothChatService to write
+            byte[] send = message.getBytes();
+            bcs.write(send);
+        }
+    }
+
     public void playSong(){
         player.reset();
         // obtener cancion
         Song playSong = songs.get(songPosn);
         // seteo el titulo de la cancion para ser mostrado
         // como notificacion
-        songTitle=playSong.getTitle();
+        songTitle = playSong.getTitle();
+        songArtist = playSong.getArtist();
+        songDuration = playSong.getDuration();
+
         // obtener id
         long currSong = playSong.getId();
         //setear uri
@@ -79,7 +102,9 @@ public class MusicService extends Service implements
         catch(Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
+        sendMessage(songTitle + "-" + songArtist + "-" + songDuration);
         player.prepareAsync();
+
     }
     public void setSong(int songIndex){
         songPosn=songIndex;
@@ -192,6 +217,7 @@ public class MusicService extends Service implements
         }
         playSong();
     }
+
     // clase anidada
     public class MusicBinder extends Binder {
         MusicService getService() {

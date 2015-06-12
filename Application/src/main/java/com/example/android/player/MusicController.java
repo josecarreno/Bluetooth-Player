@@ -20,6 +20,19 @@ import java.util.Comparator;
  */
 public class MusicController implements MediaPlayerControl {
 
+    //Inicio singleton
+    private static MusicController instance = null;
+    protected MusicController() {
+        // Exists only to defeat instantiation.
+    }
+    public static MusicController getInstance() {
+        if(instance == null) {
+            instance = new MusicController();
+        }
+        return instance;
+    }
+    //Fin singleton
+
     // Lista de canciones
     private ArrayList<Song> songList;
     // Servicio en background
@@ -32,7 +45,7 @@ public class MusicController implements MediaPlayerControl {
     // Conectar el servicio
     private ServiceConnection musicConnection;
 
-    public MusicController(Context context) {
+    public void initController(Context context) {
         updateSongList(null, null, context);
         musicConnection = new ServiceConnection(){
 
@@ -52,7 +65,6 @@ public class MusicController implements MediaPlayerControl {
             }
         };
     }
-
     public ArrayList<Song> getSongList() {
         return songList;
     }
@@ -88,6 +100,8 @@ public class MusicController implements MediaPlayerControl {
                     (android.provider.MediaStore.Audio.Media._ID);
             int artistColumn = musicCursor.getColumnIndex
                     (android.provider.MediaStore.Audio.Media.ARTIST);
+            int durationComlumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.DURATION);
 
             // agregar canciones a la lista
             int limInf = (page - 1) * itemsPerPage;
@@ -98,7 +112,8 @@ public class MusicController implements MediaPlayerControl {
                     long thisId = musicCursor.getLong(idColumn);
                     String thisTitle = musicCursor.getString(titleColumn);
                     String thisArtist = musicCursor.getString(artistColumn);
-                    songList.add(new Song(thisId, thisTitle, thisArtist));
+                    String thisDuration = musicCursor.getString(durationComlumn);
+                    songList.add(new Song(thisId, thisTitle, thisArtist, thisDuration));
                 }
                 i++;
             }

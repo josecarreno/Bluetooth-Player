@@ -39,6 +39,30 @@ import java.util.UUID;
  * thread for performing data transmissions when connected.
  */
 public class BluetoothChatService {
+
+    //Inicio singleton
+    private static BluetoothChatService instance = null;
+
+    /**
+     * Constructor. Prepares a new BluetoothChat session.
+     *
+     * @param context The UI Activity Context
+     * @param handler A Handler to send messages back to the UI Activity
+     */
+    protected BluetoothChatService(Context context, Handler handler) {
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        mState = STATE_NONE;
+        mHandler = handler;
+    }
+
+    public static BluetoothChatService getInstance(Context context, Handler handler) {
+        if(instance == null) {
+            instance = new BluetoothChatService(context, handler);
+        }
+        return instance;
+    }
+    //Fin singleton
+
     // Debugging
     private static final String TAG = "BluetoothChatService";
 
@@ -66,18 +90,6 @@ public class BluetoothChatService {
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
-
-    /**
-     * Constructor. Prepares a new BluetoothChat session.
-     *
-     * @param context The UI Activity Context
-     * @param handler A Handler to send messages back to the UI Activity
-     */
-    public BluetoothChatService(Context context, Handler handler) {
-        mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
-        mHandler = handler;
-    }
 
     /**
      * Set the current state of the chat connection

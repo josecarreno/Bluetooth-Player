@@ -112,7 +112,8 @@ public class BluetoothChatFragment extends Fragment {
         }
 
         if (mMusicController == null) {
-            mMusicController = new MusicController(getActivity());
+            mMusicController = MusicController.getInstance();
+            mMusicController.initController(getActivity());
         }
     }
 
@@ -235,7 +236,7 @@ public class BluetoothChatFragment extends Fragment {
         */
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothChatService(getActivity(), mHandler);
+        mChatService = BluetoothChatService.getInstance(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
